@@ -1,0 +1,15 @@
+modLoader="javafml"
+loaderVersion="[36,)"
+license="All rights reserved"
+ 
+[[mods]]
+modId="konchu"
+version="v1.0.0"
+displayName="Konchu"
+logoFile="konchu_logo.png"
+credits="ranafangirl"
+authors="ranafangirl"
+description='''
+A nature expansion mod for Minecraft!
+''' 
+ 

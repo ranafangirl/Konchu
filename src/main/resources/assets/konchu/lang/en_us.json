@@ -1,0 +1,62 @@
+{
+	"item.konchu.net": "Net",
+	"item.konchu.golden_net": "Golden Net",
+	"item.konchu.magnifier": "Magnifier",
+	
+	"item.konchu.lichen_clump": "Clump of Lichen",
+	"item.konchu.moss_clump": "Clump of Moss",
+	"item.konchu.rotten_bark": "Rotten Bark",
+	"item.konchu.crab_shell": "Crab Shell",
+
+	"item.konchu.music_disc_helix": "Music Disc",
+	"item.konchu.music_disc_helix.desc": "ranafangirl - helix",
+	"item.konchu.music_disc_suburban": "Music Disc",
+	"item.konchu.music_disc_suburban.desc": "ranafangirl - suburban",
+	
+	"item.konchu.snail_spawn_egg": "Snail Spawn Egg",
+
+	"block.konchu.lichen_growth": "Lichen",
+	"block.konchu.lichen_block": "Block of Lichen",
+	"block.konchu.kaolinite": "Kaolinite",
+	
+	"block.konchu.stripped_infested_drift_log": "Stripped Infested Drift Log",
+	"block.konchu.stripped_infested_drift_wood": "Stripped Infested Drift Wood",
+	"block.konchu.infested_drift_log": "Infested Drift Log",
+	"block.konchu.infested_drift_wood": "Infested Drift Wood",
+	
+	"block.konchu.stripped_drift_log": "Stripped Drift Log",
+	"block.konchu.stripped_drift_wood": "Stripped Drift Wood",
+	"block.konchu.drift_log": "Drift Log",
+	"block.konchu.drift_wood": "Drift Wood",
+	"block.konchu.drift_planks": "Drift Planks",
+	"block.konchu.drift_stairs": "Drift Stairs",
+	"block.konchu.drift_slab": "Drift Slab",
+	"block.konchu.drift_door": "Drift Door",
+	"block.konchu.drift_trapdoor": "Drift Trapdoor",
+	"block.konchu.drift_fence": "Drift Fence",
+	"block.konchu.drift_fence_gate": "Drift Fence Gate",
+	"block.konchu.drift_sign": "Drift Sign",
+	"block.konchu.drift_button": "Drift Button",
+	"block.konchu.drift_pressure_plate": "Drift Pressure Plate",
+	
+	"block.konchu.stripped_cherry_log": "Stripped Cherry Log",
+	"block.konchu.stripped_cherry_wood": "Stripped Cherry Wood",
+	"block.konchu.cherry_log": "Cherry Log",
+	"block.konchu.cherry_wood": "Cherry Wood",
+	"block.konchu.cherry_planks": "Cherry Planks",
+	"block.konchu.cherry_stairs": "Cherry Stairs",
+	"block.konchu.cherry_slab": "Cherry Slab",
+	"block.konchu.cherry_door": "Cherry Door",
+	"block.konchu.cherry_trapdoor": "Cherry Trapdoor",
+	"block.konchu.cherry_fence": "Cherry Fence",
+	"block.konchu.cherry_fence_gate": "Cherry Fence Gate",
+	"block.konchu.cherry_sign": "Cherry Sign",
+	"block.konchu.cherry_button": "Cherry Button",
+	"block.konchu.cherry_pressure_plate": "Cherry Pressure Plate",
+	
+	"block.konchu.marimo": "Marimo",
+	
+	"block.konchu.crab_block": "Crab Block",
+	
+	"entity.konchu.snail": "Snail"
+}
