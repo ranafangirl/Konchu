@@ -5,11 +5,11 @@ import java.util.EnumSet;
 import net.minecraft.entity.CreatureEntity;
 import net.minecraft.entity.ai.goal.Goal;
 
-public class HidingGoal extends Goal {
+public class HideFromEntityGoal extends Goal {
 	protected final CreatureEntity mob;
 	protected final double speedModifier;
 
-	public HidingGoal(CreatureEntity entity, double d) {
+	public HideFromEntityGoal(CreatureEntity entity, double d) {
 		this.mob = entity;
 		this.speedModifier = d;
 		this.setFlags(EnumSet.of(Goal.Flag.MOVE));

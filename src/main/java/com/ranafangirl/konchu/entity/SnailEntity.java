@@ -4,10 +4,10 @@ import javax.annotation.Nullable;
 
 import com.ranafangirl.konchu.client.render.entity.SnailRenderer;
 import com.ranafangirl.konchu.init.KonchuEntityType;
-import com.ranafangirl.konchu.util.goals.HidingGoal;
+import com.ranafangirl.konchu.util.goals.HideFromEntityGoal;
 
-import net.minecraft.block.Blocks;
 import net.minecraft.entity.AgeableEntity;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntitySize;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.ILivingEntityData;
@@ -24,6 +24,7 @@ import net.minecraft.entity.ai.goal.RandomWalkingGoal;
 import net.minecraft.entity.ai.goal.TemptGoal;
 import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.projectile.ProjectileEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.item.crafting.Ingredient;
@@ -35,10 +36,13 @@ import net.minecraft.pathfinding.ClimberPathNavigator;
 import net.minecraft.pathfinding.PathNavigator;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EntityPredicates;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.IServerWorld;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.PlayState;
 import software.bernie.geckolib3.core.builder.AnimationBuilder;
@@ -48,41 +52,42 @@ import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
 import software.bernie.geckolib3.core.manager.AnimationData;
 import software.bernie.geckolib3.core.manager.AnimationFactory;
 
+@SuppressWarnings({ "unused", "unchecked", "rawtypes" })
 public class SnailEntity extends AnimalEntity implements IAnimatable {
 	public static final DataParameter<Integer> SNAIL_TYPE = EntityDataManager.defineId(SnailEntity.class, DataSerializers.INT);
 	private static final DataParameter<Boolean> HIDING = EntityDataManager.defineId(SnailEntity.class, DataSerializers.BOOLEAN);
 	private static final DataParameter<Boolean> MOVING = EntityDataManager.defineId(SnailEntity.class, DataSerializers.BOOLEAN);
-	private static final Ingredient DIET = Ingredient.of(Blocks.ACACIA_LEAVES, Blocks.BIRCH_LEAVES, Blocks.DARK_OAK_LEAVES, Blocks.JUNGLE_LEAVES, Blocks.OAK_LEAVES, Blocks.SPRUCE_LEAVES, Items.BROWN_MUSHROOM, Items.RED_MUSHROOM, Blocks.BROWN_MUSHROOM_BLOCK, Blocks.RED_MUSHROOM_BLOCK);
 	private static final DataParameter<Boolean> TRUSTING = EntityDataManager.defineId(SnailEntity.class, DataSerializers.BOOLEAN);
 	private static final DataParameter<Byte> DATA_FLAGS_ID = EntityDataManager.defineId(SnailEntity.class, DataSerializers.BYTE);
+	private static final Ingredient DIET = Ingredient.of(Items.RED_MUSHROOM);
 	private SnailEntity.SnailAvoidEntityGoal<PlayerEntity> snailAvoidPlayersGoal;
 	private AnimationFactory factory = new AnimationFactory(this);
 	private LookRandomlyGoal lookRandom;
 	private int afraid;
 	private int mostAfraid = 30;
-
-	@SuppressWarnings("unused")
+	private int shakeIntensity;
+	private int moreShakeIntensity;
 	private boolean ignoreFrustumCheck;
 
 	protected void registerGoals() {
-		this.goalSelector.addGoal(5, new HidingGoal(this, 0));
+		this.goalSelector.addGoal(5, new HideFromEntityGoal(this, 0));
 		this.goalSelector.addGoal(8, new BreedGoal(this, 0.8D));
 	}
 
 	public SnailEntity(EntityType<? extends AnimalEntity> type, World worldIn) {
 		super(type, worldIn);
 		this.ignoreFrustumCheck = true;
-		this.goalSelector.addGoal(5, new HidingGoal(this, 0));
+		this.goalSelector.addGoal(5, new HideFromEntityGoal(this, 0));
 		this.goalSelector.addGoal(6, new RandomWalkingGoal(this, 1.0D));
 		this.goalSelector.addGoal(7, lookRandom = new LookRandomlyGoal(this));
 		this.goalSelector.addGoal(8, new BreedGoal(this, 0.8D));
 		this.reassessTrustingGoals();
 	}
 
-	protected PathNavigator createNavigation(World p_175447_1_) {
-		return new ClimberPathNavigator(this, p_175447_1_);
+	protected PathNavigator createNavigation(World level) {
+		return new ClimberPathNavigator(this, level);
 	}
-	
+
 	@Override
 	protected float getStandingEyeHeight(Pose poseIn, EntitySize sizeIn) {
 		return sizeIn.height * 0.4F;
@@ -116,7 +121,7 @@ public class SnailEntity extends AnimalEntity implements IAnimatable {
 		if (nbt.contains("SnailType")) {
 			this.setSnailType(nbt.getInt("SnailType"));
 		} else {
-			this.setSnailType(this.random.nextInt(4));
+			this.setSnailType(this.random.nextInt(6));
 		}
 		if(nbt.contains("Hiding")){
 			this.setHiding(nbt.getBoolean("Hiding"));
@@ -128,7 +133,7 @@ public class SnailEntity extends AnimalEntity implements IAnimatable {
 	@Override
 	protected void defineSynchedData() {
 		super.defineSynchedData();
-		this.getEntityData().define(SNAIL_TYPE, random.nextInt(4));
+		this.getEntityData().define(SNAIL_TYPE, random.nextInt(6));
 		this.entityData.define(HIDING, false);
 		this.entityData.define(MOVING, false);
 		this.entityData.define(TRUSTING, false);
@@ -140,8 +145,8 @@ public class SnailEntity extends AnimalEntity implements IAnimatable {
 	}
 
 	public void setSnailType(int mate) {
-		if (mate < 0 || mate >= 4) {
-			mate = this.random.nextInt(3);
+		if (mate < 0 || mate >= 6) {
+			mate = this.random.nextInt(5);
 		}
 		if (this.entityData != null) {
 			this.entityData.set(SNAIL_TYPE, mate);
@@ -169,7 +174,7 @@ public class SnailEntity extends AnimalEntity implements IAnimatable {
 			this.snailAvoidPlayersGoal = new SnailEntity.SnailAvoidEntityGoal<>(this, PlayerEntity.class, 16.0F, 0.8D, 1.33D);
 		}
 		this.goalSelector.removeGoal(this.snailAvoidPlayersGoal);
-		
+
 		if (!this.isTrusting()) {
 			this.goalSelector.addGoal(4, this.snailAvoidPlayersGoal);
 		}
@@ -190,23 +195,22 @@ public class SnailEntity extends AnimalEntity implements IAnimatable {
 				this.getEntityData().set(MOVING, false);
 			}
 		}
-		
+
 		if (!this.level.isClientSide) {
 			this.setClimbing(this.horizontalCollision);
 		}
 		super.tick();
-		
+
 		if(this.isClimbing()) this.setYBodyRot(SnailRenderer.getRotation(this) * 90F - 180);
 	}
 
-	@SuppressWarnings("unused")
 	private int getRotation(int rotation) {
 		if (rotation > (  0 + 45) && rotation < ( 90 + 45)) return 1; // E
 		if (rotation > ( 90 + 45) && rotation < (180 + 45)) return 2; // S
 		if (rotation > (180 + 45) && rotation < (270 + 45)) return 3; // W
 		return 0; 													  // N
 	}
-	
+
 	public SnailEntity getBreedOffspring(ServerWorld world, AgeableEntity entity) {
 		SnailEntity snailentity = new SnailEntity(KonchuEntityType.SNAIL.get(), world);
 		if (entity instanceof SnailEntity) {
@@ -262,23 +266,55 @@ public class SnailEntity extends AnimalEntity implements IAnimatable {
 	public boolean onClimbable() {
 		return this.isClimbing();
 	}
-	
-	public void setClimbing(boolean p_70839_1_) {
+
+	public void setClimbing(boolean bool) {
 		byte b0 = this.entityData.get(DATA_FLAGS_ID);
-		if (p_70839_1_) {
+		if (bool) {
 			b0 = (byte) (b0 | 1);
 		} else {
 			b0 = (byte) (b0 & -2);
 		}
-
 		this.entityData.set(DATA_FLAGS_ID, b0);
 	}
-	
+
+	/*
 	@Override
 	public boolean hurt(DamageSource damage, float f) {
 		setHiding(true);
 		this.reassessTrustingGoals();
 		return super.hurt(damage, f);
+	}
+	 */
+
+	@Override
+	public boolean hurt(DamageSource source, float amount) {
+		if (this.isInvulnerableTo(source)) {
+			return false;
+		} else {
+			Entity entity = source.getDirectEntity();
+			if (this.isHiding() && entity instanceof ProjectileEntity) {
+				return false;
+			} else if (source == DamageSource.CACTUS || source == DamageSource.SWEET_BERRY_BUSH) {
+				return false;
+			}
+			if (this.level.isClientSide) {
+				this.shakeIntensity = this.random.nextInt(1) == 0 ? -10 : 10;
+			}
+			return super.hurt(source, amount);
+		}	
+	}
+
+	@OnlyIn(Dist.CLIENT)
+	public float getShakeAmount(float partialTicks) {
+		return MathHelper.lerp(partialTicks, this.moreShakeIntensity, this.shakeIntensity) / 20.0F; 
+	}
+
+	@Override
+	public void knockback(float f, double d1, double d2) {
+		if (this.isHiding()) {
+			return;
+		}
+		super.knockback(f, d1, d2);
 	}
 
 	public boolean causeFallDamage(float f1, float f2) {
@@ -317,7 +353,6 @@ public class SnailEntity extends AnimalEntity implements IAnimatable {
 		}
 	}
 
-	@SuppressWarnings("unchecked")
 	private <E extends IAnimatable> PlayState predicate(AnimationEvent<E> event) {
 		if (!this.isHiding()) {
 			if (this.isMoving()) {
@@ -327,16 +362,15 @@ public class SnailEntity extends AnimalEntity implements IAnimatable {
 			}
 		} else {
 			if (this.isHiding()) {
-				event.getController().transitionLengthTicks  = 2;
 				event.getController().easingType = EasingType.EaseInOutBounce;
-				event.getController().setAnimation(new AnimationBuilder().addAnimation("snail_hide", false));        	
+				event.getController().setAnimation(new AnimationBuilder().addAnimation("snail_hide", false));
 			}
-			event.getController().setAnimation(new AnimationBuilder().addAnimation("snail_hiding", true));        	
+
+			event.getController().setAnimation(new AnimationBuilder().addAnimation("snail_hiding", true));        	 
 		}
 		return PlayState.CONTINUE;
 	}
 
-	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public void registerControllers(AnimationData data) {
 		data.addAnimationController(new AnimationController(this, "controller", 0, this::predicate));
 	}

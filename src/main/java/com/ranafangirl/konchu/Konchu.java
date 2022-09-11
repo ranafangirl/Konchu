@@ -11,11 +11,8 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import com.ranafangirl.konchu.client.render.ModeledItemRenderer;
 import com.ranafangirl.konchu.client.render.ModeledItemRenderer.ItemRenderInfo;
 import com.ranafangirl.konchu.client.render.ModeledItemRenderer.ItemRenderInfo.OtherModel;
-import com.ranafangirl.konchu.client.render.entity.SnailRenderer;
-import com.ranafangirl.konchu.entity.SnailEntity;
 import com.ranafangirl.konchu.init.KonchuBiomes;
 import com.ranafangirl.konchu.init.KonchuBlocks;
-import com.ranafangirl.konchu.init.KonchuEntityType;
 import com.ranafangirl.konchu.init.KonchuRegistry;
 import com.ranafangirl.konchu.init.KonchuTileEntityType;
 
@@ -28,19 +25,16 @@ import net.minecraft.client.renderer.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.model.ItemOverrideList;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.tileentity.SignTileEntityRenderer;
-import net.minecraft.entity.ai.attributes.GlobalEntityTypeAttributes;
 import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.ForgeHooksClient;
 import net.minecraftforge.client.event.ModelBakeEvent;
 import net.minecraftforge.common.BiomeDictionary;
+import net.minecraftforge.common.BiomeDictionary.Type;
 import net.minecraftforge.common.BiomeManager;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.BiomeDictionary.Type;
-import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
-import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
@@ -53,31 +47,25 @@ public class Konchu {
 
 	public Konchu() {
 		final IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
-		KonchuRegistry.init();
 		MinecraftForge.EVENT_BUS.register(this);
-		bus.addListener(this::registerRendering);
-		bus.addListener(this::registerEntityAttributes);
+		KonchuRegistry.init();
 		Konchu.registerBiomes();
+		bus.addListener(this::registerClient);
 	}
 
-	private void registerRendering(final FMLClientSetupEvent event) {
-		RenderingRegistry.registerEntityRenderingHandler(KonchuEntityType.SNAIL				.get(), SnailRenderer::new);
-		RenderTypeLookup.setRenderLayer					(KonchuBlocks.LICHEN_GROWTH			.get(), RenderType.cutout());
-		RenderTypeLookup.setRenderLayer					(KonchuBlocks.CHERRY_DOOR			.get(), RenderType.cutout());
-		RenderTypeLookup.setRenderLayer					(KonchuBlocks.CHERRY_TRAPDOOR		.get(), RenderType.cutout());
-		RenderTypeLookup.setRenderLayer					(KonchuBlocks.WHITE_CHERRY_LEAVES	.get(), RenderType.translucent());
-		RenderTypeLookup.setRenderLayer					(KonchuBlocks.PINK_CHERRY_LEAVES	.get(), RenderType.translucent());
-		RenderTypeLookup.setRenderLayer					(KonchuBlocks.MAGENTA_CHERRY_LEAVES	.get(), RenderType.translucent());
+	private void registerClient(FMLClientSetupEvent event) {
+		RenderTypeLookup.setRenderLayer	(KonchuBlocks.LICHEN_GROWTH			.get(), RenderType.cutout());
+		RenderTypeLookup.setRenderLayer	(KonchuBlocks.CHERRY_DOOR			.get(), RenderType.cutout());
+		RenderTypeLookup.setRenderLayer	(KonchuBlocks.CHERRY_TRAPDOOR		.get(), RenderType.cutout());
+		RenderTypeLookup.setRenderLayer	(KonchuBlocks.WHITE_CHERRY_LEAVES	.get(), RenderType.translucent());
+		RenderTypeLookup.setRenderLayer	(KonchuBlocks.PINK_CHERRY_LEAVES	.get(), RenderType.translucent());
+		RenderTypeLookup.setRenderLayer	(KonchuBlocks.MAGENTA_CHERRY_LEAVES	.get(), RenderType.translucent());
 	}
-
+	
 	public static void registerTileEntityRendering() {
 	    ClientRegistry.bindTileEntityRenderer(KonchuTileEntityType.SIGN.get(), SignTileEntityRenderer::new);
 	}
 
-	public void registerEntityAttributes(final EntityAttributeCreationEvent event) {
-		GlobalEntityTypeAttributes.put(KonchuEntityType.SNAIL.get(), SnailEntity.setCustomAttributes().build());
-	}
-	
 	public static void registerBiomes() {
     	BiomeManager.addBiome(BiomeManager.BiomeType.COOL, new BiomeManager.BiomeEntry(KonchuBiomes.CHERRY_FOREST, 1));
 		BiomeDictionary.addTypes(KonchuBiomes.CHERRY_FOREST, Type.FOREST, Type.OVERWORLD);	

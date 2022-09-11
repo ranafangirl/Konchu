@@ -11,4 +11,4 @@ public class KonchuFeatures {
 	PINK_CHERRY 	= KonchuRegistry.FEATURES.register("pink_cherry", 		()-> new TreeFeature(BaseTreeFeatureConfig.CODEC)),
 	MAGENTA_CHERRY 	= KonchuRegistry.FEATURES.register("magenta_cherry",	()-> new TreeFeature(BaseTreeFeatureConfig.CODEC));
 }
-    
+
