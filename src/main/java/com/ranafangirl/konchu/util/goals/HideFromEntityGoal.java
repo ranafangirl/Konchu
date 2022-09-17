@@ -2,14 +2,14 @@ package com.ranafangirl.konchu.util.goals;
 
 import java.util.EnumSet;
 
-import net.minecraft.entity.CreatureEntity;
-import net.minecraft.entity.ai.goal.Goal;
+import net.minecraft.world.entity.ai.goal.Goal;
+import net.minecraft.world.entity.animal.Animal;
 
 public class HideFromEntityGoal extends Goal {
-	protected final CreatureEntity mob;
+	protected final Animal mob;
 	protected final double speedModifier;
 
-	public HideFromEntityGoal(CreatureEntity entity, double d) {
+	public HideFromEntityGoal(Animal entity, double d) {
 		this.mob = entity;
 		this.speedModifier = d;
 		this.setFlags(EnumSet.of(Goal.Flag.MOVE));
@@ -23,17 +23,13 @@ public class HideFromEntityGoal extends Goal {
 			if (this.mob.getLastHurtByMob() != null) {
 	        	return true;		
 			}
-			
 		}
         return this.stopMovement();
-		
 	}
 
 	private boolean stopMovement() {
         this.mob.xxa = 0.0F;
         this.mob.zza = 0.0F;
-        
         return false;
 	}
-
 }

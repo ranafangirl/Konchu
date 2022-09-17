@@ -1,6 +1,7 @@
 {
   "replace": false,
   "values": [
-    "konchu:drift_fence"
+    "konchu:drift_fence",
+    "konchu:cherry_fence"
   ]
 }

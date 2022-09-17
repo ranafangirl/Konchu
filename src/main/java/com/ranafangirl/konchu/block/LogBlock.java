@@ -1,29 +1,22 @@
 package com.ranafangirl.konchu.block;
 
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.RotatedPillarBlock;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
-import net.minecraftforge.common.ToolType;
-import net.minecraftforge.fml.RegistryObject;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.RotatedPillarBlock;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraftforge.registries.RegistryObject;
 
 public class LogBlock extends RotatedPillarBlock {
+	@SuppressWarnings("unused")
 	private RegistryObject<Block> stripped;
 	
 	public LogBlock(Properties properties, RegistryObject<Block> block) {
 		super(properties);
-		stripped = block;
+		stripped = block; 
 	}
 	
+	@SuppressWarnings("unused")
 	private BlockState getLogState(RegistryObject<Block> block) {
 		return block.get().defaultBlockState();
-	}
+	} 
 
-	@Override
-    public BlockState getToolModifiedState(BlockState state, World world, BlockPos pos, PlayerEntity player, ItemStack stack, ToolType toolType) {
-        return toolType == ToolType.AXE ? getLogState(stripped) : null;
-    }
 }

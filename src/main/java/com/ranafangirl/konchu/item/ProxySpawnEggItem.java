@@ -4,24 +4,24 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.Objects;
 
-import net.minecraft.block.BlockState;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.SpawnReason;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.ItemUseContext;
-import net.minecraft.item.SpawnEggItem;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.ActionResultType;
-import net.minecraft.util.Direction;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
-import net.minecraft.world.server.ServerWorld;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.SpawnEggItem;
+import net.minecraft.world.item.context.UseOnContext;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.util.Lazy;
-import net.minecraftforge.fml.RegistryObject;
-import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
+import net.minecraftforge.fml.util.ObfuscationReflectionHelper;
+import net.minecraftforge.registries.RegistryObject;
 
 @SuppressWarnings("deprecation")
 public class ProxySpawnEggItem extends SpawnEggItem {
@@ -57,14 +57,14 @@ public class ProxySpawnEggItem extends SpawnEggItem {
 	}
 
 	@Override
-	public EntityType<?> getType(CompoundNBT nbt) {
+	public EntityType<?> getType(CompoundTag nbt) {
 		return this.lazyEntity.get();
 	}
 
-	public ActionResultType onItemUse(ItemUseContext context) {
-		World world = context.getLevel();
-		if (!(world instanceof ServerWorld)) {
-			return ActionResultType.SUCCESS;
+	public InteractionResult useOn(UseOnContext context) {
+		Level world = context.getLevel();
+		if (!(world instanceof ServerLevel)) {
+			return InteractionResult.SUCCESS;
 		} else {
 			ItemStack itemstack = context.getItemInHand();
 			BlockPos blockpos = context.getClickedPos();
@@ -77,18 +77,18 @@ public class ProxySpawnEggItem extends SpawnEggItem {
 				blockpos1 = blockpos.relative(direction);
 			}
 			EntityType<?> entitytype = this.getType(itemstack.getTag());
-			CompoundNBT NBT = new CompoundNBT();
+			CompoundTag NBT = new CompoundTag();
 			if (itemstack.hasTag()) {
 				NBT.merge(itemstack.getTag());
 			}
 			if (!NBT.contains("EntityTag")) {
-				NBT.put("EntityTag", new CompoundNBT());
+				NBT.put("EntityTag", new CompoundTag());
 			}
-			Entity summonedEntity = entitytype.spawn((ServerWorld) world, NBT, null, context.getPlayer(), blockpos1, SpawnReason.SPAWN_EGG, true, !Objects.equals(blockpos, blockpos1) && direction == Direction.UP);
+			Entity summonedEntity = entitytype.spawn((ServerLevel) world, NBT, null, context.getPlayer(), blockpos1, MobSpawnType.SPAWN_EGG, true, !Objects.equals(blockpos, blockpos1) && direction == Direction.UP);
 			if (summonedEntity != null) {
 				itemstack.shrink(1);
 			}
-			return ActionResultType.CONSUME;
+			return InteractionResult.CONSUME;
 		}
 	}
 }

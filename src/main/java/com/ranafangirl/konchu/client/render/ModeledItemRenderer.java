@@ -7,12 +7,12 @@ import java.util.Map;
 
 import com.ranafangirl.konchu.item.ModeledItem;
 
-import net.minecraft.client.renderer.model.IBakedModel;
-import net.minecraft.client.renderer.model.ItemCameraTransforms.TransformType;
-import net.minecraft.client.renderer.model.ModelResourceLocation;
-import net.minecraft.item.Item;
-import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.client.model.ModelLoader;
+import net.minecraft.client.renderer.block.model.ItemTransforms.TransformType;
+import net.minecraft.client.resources.model.ModelResourceLocation;
+import net.minecraft.client.resources.model.SimpleBakedModel;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.Item;
+import net.minecraftforge.client.model.ForgeModelBakery;
 
 public class ModeledItemRenderer {
 	private static List<ItemRenderInfo> renders = new ArrayList<>();
@@ -50,7 +50,7 @@ public class ModeledItemRenderer {
 
 		private void addTransformModel(String extention, TransformType type) {
 			String location = item.getRegistryName() + extention;
-			ModelLoader.addSpecialModel(new ModelResourceLocation(location, "inventory"));
+			ForgeModelBakery.addSpecialModel(new ModelResourceLocation(location, "inventory"));
 			perspectives.put(type, new OtherModel(this, location, type));
 		}
 
@@ -68,7 +68,7 @@ public class ModeledItemRenderer {
 
 		public static class OtherModel {
 			private ResourceLocation location;
-			private IBakedModel model;
+			private SimpleBakedModel model;
 
 			public OtherModel(ItemRenderInfo renderInfo, String location, TransformType type) {
 				this.location = new ModelResourceLocation(location, "inventory");
@@ -78,11 +78,11 @@ public class ModeledItemRenderer {
 				return location;
 			}
 
-			public void setModel(IBakedModel model) {
+			public void setModel(SimpleBakedModel model) {
 				this.model = model;
 			}
 
-			public IBakedModel getModel() {
+			public SimpleBakedModel getModel() {
 				return model;
 			}
 		}

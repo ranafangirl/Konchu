@@ -2,9 +2,9 @@ package com.ranafangirl.konchu.item;
 
 import javax.annotation.Nullable;
 
-import net.minecraft.item.Item;
+import net.minecraft.world.item.Item;
 
-public class ModeledItem extends Item{
+public class ModeledItem extends Item {
 
 	public ModeledItem(Properties properties) {
 		super(properties);

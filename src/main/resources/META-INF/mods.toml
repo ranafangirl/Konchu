@@ -4,7 +4,7 @@ license="All rights reserved"
  
 [[mods]]
 modId="konchu"
-version="v1.0.0"
+version="1.0.0"
 displayName="Konchu"
 logoFile="konchu_logo.png"
 credits="ranafangirl"

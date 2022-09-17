@@ -5,10 +5,8 @@ import org.apache.commons.lang3.tuple.Pair;
 import com.ranafangirl.konchu.Konchu;
 
 import net.minecraftforge.common.ForgeConfigSpec;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
-import net.minecraftforge.fml.config.ModConfig;
 
 @Mod.EventBusSubscriber(modid = Konchu.MOD_ID, bus = Bus.MOD)
 public class KonchuConfig {
@@ -34,13 +32,5 @@ public class KonchuConfig {
 		final Pair<Common, ForgeConfigSpec> specPair = new ForgeConfigSpec.Builder().configure(Common::new);
 		COMMON_SPEC = specPair.getRight();
 		COMMON = specPair.getLeft();
-	}
-
-	@SubscribeEvent
-	public static void onLoad(final ModConfig.Loading event) {
-	}
-
-	@SubscribeEvent
-	public static void onFileChange(final ModConfig.Reloading event) {
 	}
 }

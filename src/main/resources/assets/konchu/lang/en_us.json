@@ -54,9 +54,18 @@
 	"block.konchu.cherry_button": "Cherry Button",
 	"block.konchu.cherry_pressure_plate": "Cherry Pressure Plate",
 	
+	"block.konchu.magenta_cherry_leaves": "Magenta Cherry Leaves",
+	"block.konchu.pink_cherry_leaves": "Pink Cherry Leaves",
+	"block.konchu.white_cherry_leaves": "White Cherry Leaves",
+
 	"block.konchu.marimo": "Marimo",
-	
 	"block.konchu.crab_block": "Crab Block",
 	
-	"entity.konchu.snail": "Snail"
-}
+	"entity.konchu.snail": "Snail",
+	
+	"biome.konchu.cherry_forest": "Cherry Forest",
+
+	"item.konchu.net.missed": "Net missed",
+	"item.konchu.net.is_full": "Net is full",
+	"item.konchu.net.cannot_catch": "Creature cannot be caught"
+}	

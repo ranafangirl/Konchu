@@ -1,23 +1,22 @@
 package com.ranafangirl.konchu.client.render.entity;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.math.Vector3f;
 import com.ranafangirl.konchu.client.render.model.SnailModel;
-import com.ranafangirl.konchu.entity.SnailEntity;
+import com.ranafangirl.konchu.entity.Snail;
 
-import net.minecraft.client.renderer.IRenderTypeBuffer;
-import net.minecraft.client.renderer.entity.EntityRendererManager;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.vector.Vector3f;
-import net.minecraft.world.World;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.entity.EntityRendererProvider;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
 import software.bernie.geckolib3.renderers.geo.GeoEntityRenderer;
 
-public class SnailRenderer extends GeoEntityRenderer<SnailEntity> {
-	public SnailRenderer(EntityRendererManager renderManager) {
+public class SnailRenderer extends GeoEntityRenderer<Snail> {
+	public SnailRenderer(EntityRendererProvider.Context renderManager) { 
 		super(renderManager, new SnailModel());
 	}
 
-	@Override
-	public void render(SnailEntity entity, float entityYaw, float partialTicks, MatrixStack stack, IRenderTypeBuffer bufferIn, int packedLightIn) {		
+	public void render(Snail entity, float entityYaw, float partialTicks, PoseStack stack, MultiBufferSource bufferIn, int packedLightIn) {		
 		if (entity.isClimbing()) {
 			int rotation = getRotation(entity);
 			switch (rotation) {
@@ -27,7 +26,6 @@ public class SnailRenderer extends GeoEntityRenderer<SnailEntity> {
 				}
 				case 1: {
 					stack.mulPose(Vector3f.ZP.rotationDegrees(90));
-					
 					break;
 				}
 				case 2: {
@@ -41,32 +39,26 @@ public class SnailRenderer extends GeoEntityRenderer<SnailEntity> {
 			}
 			stack.translate(0, -4 / 16D, 0);
 		}
-			
 		super.render(entity, entityYaw, partialTicks, stack, bufferIn, packedLightIn);
-
 	}
 
-	public static int getRotation(SnailEntity entity) {
+	public static int getRotation(Snail entity) {
 		if(entity == null || entity.level == null) return 0;
-		
 		float rotation = (entity.yBodyRot + 180);
-		World world = entity.level;
+		Level level = entity.level;
 		BlockPos pos = new BlockPos(entity.position());
-		
-		if (rotation > (0 + 45) && rotation < (90 + 45) && !world.isEmptyBlock(pos.east())) return 1; // E
-		if (rotation > (90 + 45) && rotation < (180 + 45) && !world.isEmptyBlock(pos.south())) return 2; // S
-		if (rotation > (180 + 45) && rotation < (270 + 45) && !world.isEmptyBlock(pos.west())) return 3; // W
-		else if(!world.isEmptyBlock(pos.north())) return 0;
-		return getRotationFromBlock(pos, world); // N
+		if (rotation > (0 + 45) && rotation < (90 + 45) && !level.isEmptyBlock(pos.east())) return 1;		// EAST
+		if (rotation > (90 + 45) && rotation < (180 + 45) && !level.isEmptyBlock(pos.south())) return 2;	// SOUTH
+		if (rotation > (180 + 45) && rotation < (270 + 45) && !level.isEmptyBlock(pos.west())) return 3;	// WEST
+		else if(!level.isEmptyBlock(pos.north())) return 0;
+		return getRotationFromBlock(pos, level);															// NORTH
 	}
 	
-	public static int getRotationFromBlock(BlockPos pos, World world) {
-		if(world == null) return 0;
-		
-		if(!world.isEmptyBlock(pos.north())) return 0; // N
-		if(!world.isEmptyBlock(pos.east() )) return 1; // E
-		if(!world.isEmptyBlock(pos.south())) return 2; // S
-		return 3; // W
+	public static int getRotationFromBlock(BlockPos pos, Level level) {
+		if(level == null) return 0;
+		if(!level.isEmptyBlock(pos.north())) return 0;	// NORTH
+		if(!level.isEmptyBlock(pos.east() )) return 1; 	// EAST
+		if(!level.isEmptyBlock(pos.south())) return 2;	// SOUTH
+		return 3;										// WEST
 	}
-	
 }

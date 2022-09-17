@@ -1,45 +1,20 @@
 package com.ranafangirl.konchu;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
-import com.ranafangirl.konchu.client.render.ModeledItemRenderer;
-import com.ranafangirl.konchu.client.render.ModeledItemRenderer.ItemRenderInfo;
-import com.ranafangirl.konchu.client.render.ModeledItemRenderer.ItemRenderInfo.OtherModel;
-import com.ranafangirl.konchu.init.KonchuBiomes;
-import com.ranafangirl.konchu.init.KonchuBlocks;
+import com.google.common.eventbus.Subscribe;
+import com.ranafangirl.konchu.init.KonchuBlockEntityType;
 import com.ranafangirl.konchu.init.KonchuRegistry;
-import com.ranafangirl.konchu.init.KonchuTileEntityType;
 
-import net.minecraft.block.BlockState;
-import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.RenderTypeLookup;
-import net.minecraft.client.renderer.model.BakedQuad;
-import net.minecraft.client.renderer.model.IBakedModel;
-import net.minecraft.client.renderer.model.ItemCameraTransforms;
-import net.minecraft.client.renderer.model.ItemOverrideList;
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.renderer.tileentity.SignTileEntityRenderer;
-import net.minecraft.util.Direction;
-import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.client.ForgeHooksClient;
-import net.minecraftforge.client.event.ModelBakeEvent;
-import net.minecraftforge.common.BiomeDictionary;
-import net.minecraftforge.common.BiomeDictionary.Type;
-import net.minecraftforge.common.BiomeManager;
+import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
+import net.minecraft.client.renderer.blockentity.SignRenderer;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 
-@SuppressWarnings("deprecation")
 @Mod("konchu")
 public class Konchu {
 	public static final Logger LOGGER = LogManager.getLogger();
@@ -49,28 +24,18 @@ public class Konchu {
 		final IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
 		MinecraftForge.EVENT_BUS.register(this);
 		KonchuRegistry.init();
-		Konchu.registerBiomes();
 		bus.addListener(this::registerClient);
 	}
 
 	private void registerClient(FMLClientSetupEvent event) {
-		RenderTypeLookup.setRenderLayer	(KonchuBlocks.LICHEN_GROWTH			.get(), RenderType.cutout());
-		RenderTypeLookup.setRenderLayer	(KonchuBlocks.CHERRY_DOOR			.get(), RenderType.cutout());
-		RenderTypeLookup.setRenderLayer	(KonchuBlocks.CHERRY_TRAPDOOR		.get(), RenderType.cutout());
-		RenderTypeLookup.setRenderLayer	(KonchuBlocks.WHITE_CHERRY_LEAVES	.get(), RenderType.translucent());
-		RenderTypeLookup.setRenderLayer	(KonchuBlocks.PINK_CHERRY_LEAVES	.get(), RenderType.translucent());
-		RenderTypeLookup.setRenderLayer	(KonchuBlocks.MAGENTA_CHERRY_LEAVES	.get(), RenderType.translucent());
 	}
 	
-	public static void registerTileEntityRendering() {
-	    ClientRegistry.bindTileEntityRenderer(KonchuTileEntityType.SIGN.get(), SignTileEntityRenderer::new);
+	@Subscribe
+	public static void registerRenderers() {
+		BlockEntityRenderers.register(KonchuBlockEntityType.SIGN.get(), SignRenderer::new);
 	}
 
-	public static void registerBiomes() {
-    	BiomeManager.addBiome(BiomeManager.BiomeType.COOL, new BiomeManager.BiomeEntry(KonchuBiomes.CHERRY_FOREST, 1));
-		BiomeDictionary.addTypes(KonchuBiomes.CHERRY_FOREST, Type.FOREST, Type.OVERWORLD);	
-	}
-	
+	/*
 	public static void modelBakeEvent(ModelBakeEvent event) {
 		Map<ResourceLocation, IBakedModel> modelRegistry = event.getModelRegistry();
 		for (ItemRenderInfo renderInfo : ModeledItemRenderer.getRenders()) {
@@ -80,9 +45,9 @@ public class Konchu {
 				modelRegistry.put(otherModel.getLocation(), otherModel.getModel());
 			}
 
-			IBakedModel bakedModel = new IBakedModel() {
+			IBakedModel bakedModel = new IForgeBakedModel() {
 				@Override
-				public IBakedModel handlePerspective(ItemCameraTransforms.TransformType transformType, MatrixStack mat) {
+				public IBakedModel handlePerspective(ItemTransforms.TransformType transformType, Matrix3f mat) {
 					IBakedModel model = renderInfo.getTransforms().get(transformType).getModel();
 					if(model == null) model = baseModel;
 					return ForgeHooksClient.handlePerspective(model, transformType, mat);
@@ -125,4 +90,5 @@ public class Konchu {
 			modelRegistry.put(renderInfo.getBaseLocation(), bakedModel);
 		}
 	}
+	*/
 }
